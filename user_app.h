@@ -1,4 +1,3 @@
-// user_app.h
 #ifndef USER_APP_H
 #define USER_APP_H   // guard ANTES dos includes
 
@@ -7,7 +6,7 @@
 #include "queue.h"
 #include "semphr.h"
 
-#define LIMIAR_TEMP  50.0f  
+#define LIMIAR_TEMP  50.0 
 
 extern QueueHandle_t     xQueueTemp;
 extern SemaphoreHandle_t xMutexBuf;

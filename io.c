@@ -2,44 +2,56 @@
 #include <xc.h>
 
 void ADC_Init(void) {
-    AD1PCFGbits.PCFG0 = 0; // AN0 analógico
+    AD1PCFGbits.PCFG0 = 0; // AN0 como analógico
+    TRISBbits.TRISB0 = 1; // RB0 como entrada (CORRIGIDO)
 
-    AD1CON1bits.ADON = 0; // desliga antes de configurar
-    AD1CON1bits.SSRC = 0; // conversão manual
-    AD1CON1bits.ASAM = 0; // amostragem manual
+    AD1CON1 = 0x0000;
+    AD1CHS = 0x0000; // Canal AN0
+    AD1CSSL = 0;
+    AD1CON2 = 0x0000;
+    AD1CON2bits.VCFG = 0b000; // Referência AVDD/AVSS
+    AD1CON3 = 0x1F02; // Sample time = 31 TAD
 
-    AD1CON2bits.VCFG = 0; // Vref = AVdd/AVss
-    AD1CON2bits.CSCNA = 0; // canal fixo
-
-    AD1CON3bits.ADCS = 1; // Tad = 2*Tcy
-    AD1CON3bits.SAMC = 31; // sample time = 31 Tad
-
-    AD1CHSbits.CH0SA = 0; // AN0
-
-    AD1CON1bits.ADON = 1; // liga ADC
+    AD1CON1bits.ADON = 1;
 }
 
 float ADC_ReadTemp(void) {
     AD1CON1bits.SAMP = 1;
-    vTaskDelay(pdMS_TO_TICKS(10));
+    vTaskDelay(5);
     AD1CON1bits.SAMP = 0;
     while (!AD1CON1bits.DONE);
 
-    unsigned int raw = ADC1BUF0;
-    float tensao = raw * (3.3f / 1023.0f);
-    float temp = tensao * 100.0f;
+    uint16_t raw = (uint16_t)ADC1BUF0;
+
+    // LM35 em 3.3V: 10mV/°C
+    float tensao = (raw / 1023.0f) * 3.3f;
+    float temp   = tensao * 100.0f;
+
     return temp;
+}
+uint16_t ADC_ReadRaw(void) {
+    AD1CON1bits.SAMP = 1;         // Inicia amostragem
+    vTaskDelay(5);                // Aguarda estabilizar
+    AD1CON1bits.SAMP = 0;         // Para amostragem, inicia conversão
+    while (!AD1CON1bits.DONE);    // Aguarda conversão
+    return (uint16_t)ADC1BUF0;
 }
 
 void UART_Init(void) {
-    U1MODEbits.STSEL = 0;   // 1 stop bit
-    U1MODEbits.PDSEL = 0;   // 8 bits, sem paridade
-    U1MODEbits.BRGH  = 0;   // standard speed
 
-    U1BRG = 25;             // 9600 baud @ Fcy=4MHz
 
-    U1MODEbits.UARTEN = 1;  // 1º habilita UART
-    U1STAbits.UTXEN   = 1;  // 2º habilita TX
+    TRISFbits.TRISF3 = 0;
+    U1MODE = 0x0000;
+    U1MODEbits.STSEL = 0;
+    U1MODEbits.PDSEL = 0;
+    U1MODEbits.BRGH = 0;
+
+    U1BRG = 25;
+    U1STA = 0x0000;
+
+    U1MODEbits.UARTEN = 1;
+    U1STAbits.UTXEN = 1;
+
 }
 
 void UART_WriteChar(char c) {
@@ -48,6 +60,7 @@ void UART_WriteChar(char c) {
 }
 
 void UART_WriteString(const char *str) {
-    while (*str)
+    while (*str) {
         UART_WriteChar(*str++);
+    }
 }
