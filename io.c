@@ -1,5 +1,8 @@
 #include "io.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include <xc.h>
+
 
 void ADC_Init(void) {
     AD1PCFGbits.PCFG0 = 0; // AN0 como analógico
@@ -17,7 +20,7 @@ void ADC_Init(void) {
 
 float ADC_ReadTemp(void) {
     AD1CON1bits.SAMP = 1;
-    vTaskDelay(5);
+    vTaskDelay(pdMS_TO_TICKS(5));
     AD1CON1bits.SAMP = 0;
     while (!AD1CON1bits.DONE);
 
@@ -30,7 +33,7 @@ float ADC_ReadTemp(void) {
 }
 uint16_t ADC_ReadRaw(void) {
     AD1CON1bits.SAMP = 1;         // Inicia amostragem
-    vTaskDelay(5);                // Aguarda estabilizar
+    vTaskDelay(pdMS_TO_TICKS(5)); // Aguarda estabilizar
     AD1CON1bits.SAMP = 0;         // Para amostragem, inicia conversão
     while (!AD1CON1bits.DONE);    // Aguarda conversão
     return (uint16_t)ADC1BUF0;
@@ -61,5 +64,20 @@ void UART_WriteChar(char c) {
 void UART_WriteString(const char *str) {
     while (*str) {
         UART_WriteChar(*str++);
+    }
+}
+
+void Atuador_Init(void) {
+    
+    TRISDbits.TRISD0 = 0; // Configura RD0 como SAÍDA
+    LATDbits.LATD0 = 0; // Garante que o cooler inicia DESLIGADO
+}
+
+void GPIO_WriteAtuador(int estado) {
+    // Escreve no registrador LATCH do PORTD
+    if (estado) {
+        LATDbits.LATD0 = 1; // Liga o pino
+    } else {
+        LATDbits.LATD0 = 0; // Desliga o pino
     }
 }

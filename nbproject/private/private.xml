@@ -3,10 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Biblioteca/Desktop/Projeto%20de%20SO%20embarcado/T2/FreeRTOS/io.c</file>
-            <file>file:/D:/Biblioteca/Desktop/Projeto%20de%20SO%20embarcado/T2/FreeRTOS/user_app.h</file>
-            <file>file:/D:/Biblioteca/Desktop/Projeto%20de%20SO%20embarcado/T2/FreeRTOS/main.c</file>
-            <file>file:/D:/Biblioteca/Desktop/Projeto%20de%20SO%20embarcado/T2/FreeRTOS/user_app.c</file>
+            <file>file:/C:/Users/richard.stolk/MPLABXProjects/SOE/FreeRTOs_PIC24FJ128GA010/io.c</file>
+            <file>file:/C:/Users/richard.stolk/MPLABXProjects/SOE/FreeRTOs_PIC24FJ128GA010/user_app.c</file>
+            <file>file:/C:/Users/richard.stolk/MPLABXProjects/SOE/FreeRTOs_PIC24FJ128GA010/main.c</file>
         </group>
     </open-files>
 </project-private>

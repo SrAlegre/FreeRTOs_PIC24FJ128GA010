@@ -28,6 +28,7 @@ int main(void) {
     xTaskCreate(vTaskControl, "CTRL", 256, NULL, 3, NULL); //Usa snprintf (pesado)
     xTaskCreate(vTaskUART, "UART", 256, NULL, 1, NULL); // Array local de 32 bytes + funções de string
     xTaskCreate(vTaskAlarm, "ALARM", 128, NULL, 4, NULL);
+    xTaskCreate(vTaskAtuador, "ATUADOR", 128, NULL, 4, NULL);
 
     vTaskStartScheduler();
     while (1);
