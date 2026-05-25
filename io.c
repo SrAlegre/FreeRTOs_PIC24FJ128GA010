@@ -23,7 +23,6 @@ float ADC_ReadTemp(void) {
 
     uint16_t raw = (uint16_t)ADC1BUF0;
 
-    // LM35 em 3.3V: 10mV/°C
     float tensao = (raw / 1023.0f) * 3.3f;
     float temp   = tensao * 100.0f;
 

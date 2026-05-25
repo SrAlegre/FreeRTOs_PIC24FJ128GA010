@@ -2,6 +2,8 @@
 #include "io.h"
 #include <stdio.h>   
 #include <string.h>  
+#define LIMIAR_TEMP  50.0 
+
 void floatToString(float valor, int casas_decimais, char *buffer, int tamanho);
 
 QueueHandle_t xQueueTemp;
@@ -61,11 +63,11 @@ void vTaskUART(void *pvParameters) {
         xSemaphoreTake(xMutexBuf, portMAX_DELAY); // segura o buffe para poder escrever na uart
         UART_WriteString("\r\n");
         strcpy(local, buffer);
-        xSemaphoreGive(xMutexBuf);// libera
+        xSemaphoreGive(xMutexBuf); // libera
 
         xSemaphoreTake(xMutexUART, portMAX_DELAY); // segura a aguarde para n ser subescrito
         UART_WriteString(local);
-        xSemaphoreGive(xMutexUART);//libera
+        xSemaphoreGive(xMutexUART); //libera
 
         vTaskDelay(pdMS_TO_TICKS(200)); // tempo para o proxima vez que for exibir algo na tela
     }
@@ -75,10 +77,10 @@ void vTaskAlarm(void *pvParameters) {
     (void) pvParameters;
 
     while (1) {
-        xSemaphoreTake(xSemAlarm, portMAX_DELAY); // segura a alerta e a uart
+        xSemaphoreTake(xSemAlarm, portMAX_DELAY); // bloqueia a tarefa esperando o sinal de alarme
         xSemaphoreTake(xMutexUART, portMAX_DELAY);
         UART_WriteString("\r\n!! ALARME: temperatura critica !!\r\n"); // escreve
-        xSemaphoreGive(xMutexUART);// libera uart
+        xSemaphoreGive(xMutexUART); // libera uart
     }
 }
 

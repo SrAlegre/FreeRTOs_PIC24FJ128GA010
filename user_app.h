@@ -6,7 +6,6 @@
 #include "queue.h"
 #include "semphr.h"
 
-#define LIMIAR_TEMP  50.0 
 
 extern QueueHandle_t     xQueueTemp;
 extern SemaphoreHandle_t xMutexBuf;
