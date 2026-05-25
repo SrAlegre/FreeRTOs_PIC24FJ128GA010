@@ -21,7 +21,12 @@ typedef enum {
 } atuador_cmd_t;
 
 void init_task(void);
+
 //void vTaskADC    (void *pvParameters);
+
+// Declaração da função de callback
+void vTimerADC_Callback(TimerHandle_t xTimer);
+
 void vTaskControl(void *pvParameters);
 void vTaskUART   (void *pvParameters);
 void vTaskAlarm  (void *pvParameters);

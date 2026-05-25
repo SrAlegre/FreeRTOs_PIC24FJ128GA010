@@ -20,9 +20,6 @@ TimerHandle_t xTimerADC;
 
 char buffer[32];
 
-// Declaração da função de callback
-void vTimerADC_Callback(TimerHandle_t xTimer);
-
 void init_task(void) {
     ADC_Init();
     UART_Init();
@@ -88,10 +85,12 @@ void vTaskControl(void *pvParameters) {
         xSemaphoreGive(xMutexBuf); // libera o buffer
 
         // Lógica de Controle com Histerese
-        if (temp >= LIMIAR_TEMP && estado_atual == ATUADOR_OFF) {
+        if (temp >= LIMIAR_TEMP ) {
+            if(estado_atual == ATUADOR_OFF){
             estado_atual = ATUADOR_ON;
             xQueueSend(xQueueAtuador, &estado_atual, 0); // Envia comando para LIGAR
-            xSemaphoreGive(xSemAlarm);                    // Dispara alarme na UART
+            }
+            xSemaphoreGive(xSemAlarm); // Dispara alarme na UART
         } 
         else if (temp < (LIMIAR_TEMP - HIST_VAL) && estado_atual == ATUADOR_ON) {
             estado_atual = ATUADOR_OFF;
