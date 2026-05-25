@@ -10,6 +10,7 @@ void ADC_Init(void) {
 
     AD1CON1 = 0x0000;
     AD1CHS = 0x0000; // Canal AN0
+    AD1CON1bits.SSRC = 7;  // Auto-convert (O hardware controla o tempo, elimina o delay)
     AD1CSSL = 0;
     AD1CON2 = 0x0000;
     AD1CON2bits.VCFG = 0b000; // Referência AVDD/AVSS
@@ -19,10 +20,12 @@ void ADC_Init(void) {
 }
 
 float ADC_ReadTemp(void) {
-    AD1CON1bits.SAMP = 1;
-    vTaskDelay(pdMS_TO_TICKS(5));
-    AD1CON1bits.SAMP = 0;
-    while (!AD1CON1bits.DONE);
+    AD1CON1bits.SAMP = 1; // Inicia a amostragem (o hardware vai contar o tempo sozinho) 
+    
+    //vTaskDelay(pdMS_TO_TICKS(5));
+    //AD1CON1bits.SAMP = 0;
+    
+    while (!AD1CON1bits.DONE); // Aguarda a conversão (demora microssegundos, não bloqueia o RTOS)
 
     uint16_t raw = (uint16_t)ADC1BUF0;
 

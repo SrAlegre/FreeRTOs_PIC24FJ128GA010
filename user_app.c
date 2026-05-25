@@ -2,19 +2,26 @@
 #include "io.h"
 #include <stdio.h>   
 #include <string.h>  
+#include "timers.h"
+
 #define LIMIAR_TEMP  50.0 
+#define HIST_VAL  3.0f  // Margem de histerese (desliga em LIMIAR_TEMP - HIST_VAL)
 
 void floatToString(float valor, int casas_decimais, char *buffer, int tamanho);
 
+QueueHandle_t xQueueAtuador; // Nova fila para controlar o cooler
 QueueHandle_t xQueueTemp;
+
 SemaphoreHandle_t xMutexBuf;
 SemaphoreHandle_t xMutexUART;
 SemaphoreHandle_t xSemAlarm;
+
+TimerHandle_t xTimerADC;
+
 char buffer[32];
 
-#define HIST_VAL  3.0f  // Margem de histerese (desliga em LIMIAR_TEMP - HIST_VAL)
-
-QueueHandle_t xQueueAtuador; // Nova fila para controlar o cooler
+// Declaração da função de callback
+void vTimerADC_Callback(TimerHandle_t xTimer);
 
 void init_task(void) {
     ADC_Init();
@@ -27,8 +34,22 @@ void init_task(void) {
     xMutexBuf = xSemaphoreCreateMutex();
     xMutexUART = xSemaphoreCreateMutex();
     xSemAlarm = xSemaphoreCreateBinary();
+    
+    // --- CRIAÇÃO E INICIALIZAÇÃO DO TIMER (100ms periódico) ---
+    xTimerADC = xTimerCreate(
+        "Timer_ADC",               // Nome apenas para debug
+        pdMS_TO_TICKS(100),        // Período de 100ms (igual à antiga task)
+        pdTRUE,                    // pdTRUE indica que o timer é auto-reload (periódico)
+        (void *) 0,                // ID do timer (não precisamos usar)
+        vTimerADC_Callback         // A função que será chamada a cada 100ms
+    );
+
+    if (xTimerADC != NULL) {
+        xTimerStart(xTimerADC, 0); // Inicializa o timer imediatamente
+    }
 }
 
+/*
 void vTaskADC(void *pvParameters) {
     (void) pvParameters;
     float temp;
@@ -38,6 +59,17 @@ void vTaskADC(void *pvParameters) {
         xQueueSend(xQueueTemp, &temp, portMAX_DELAY); //Coloca o valor no pipe
         vTaskDelay(pdMS_TO_TICKS(100)); //aguarda para proxima leitura
     }
+} 
+ */
+
+void vTimerADC_Callback(TimerHandle_t xTimer) {
+    (void) xTimer;
+    float temp;
+
+    temp = ADC_ReadTemp();
+
+    // IMPORTANTE: O terceiro parâmetro DEVE SER 0. Não podemos bloquear aqui!
+    xQueueSend(xQueueTemp, &temp, 0); 
 }
 
 void vTaskControl(void *pvParameters) {

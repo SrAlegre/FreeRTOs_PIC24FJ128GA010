@@ -21,7 +21,7 @@ typedef enum {
 } atuador_cmd_t;
 
 void init_task(void);
-void vTaskADC    (void *pvParameters);
+//void vTaskADC    (void *pvParameters);
 void vTaskControl(void *pvParameters);
 void vTaskUART   (void *pvParameters);
 void vTaskAlarm  (void *pvParameters);
