@@ -13,10 +13,23 @@ extern SemaphoreHandle_t xMutexUART;
 extern SemaphoreHandle_t xSemAlarm;
 extern char              buffer[32];
 
+extern QueueHandle_t    xQueueAtuador;
+// Estados/Comandos para o atuador
+typedef enum {
+    ATUADOR_OFF = 0,
+    ATUADOR_ON
+} atuador_cmd_t;
+
 void init_task(void);
-void vTaskADC    (void *pvParameters);
+
+//void vTaskADC    (void *pvParameters);
+
+// Declaração da função de callback
+void vTimerADC_Callback(TimerHandle_t xTimer);
+
 void vTaskControl(void *pvParameters);
 void vTaskUART   (void *pvParameters);
 void vTaskAlarm  (void *pvParameters);
+void vTaskAtuador  (void *pvParameters);
 
 #endif

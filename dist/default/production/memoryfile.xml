@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <project>
-  <executable name="dist/default/production/FreeRTOS.production.elf">
+  <executable name="dist/default/production/FreeRTOs_PIC24FJ128GA010.production.elf">
     <memory name="data">
       <units>bytes</units>
       <length>8192</length>
-      <used>5054</used>
-      <free>3138</free>
+      <used>5060</used>
+      <free>3132</free>
     </memory>
     <memory name="program">
       <units>bytes</units>
       <length>131322</length>
-      <used>40446</used>
-      <free>90876</free>
+      <used>40737</used>
+      <free>90585</free>
     </memory>
   </executable>
 </project>

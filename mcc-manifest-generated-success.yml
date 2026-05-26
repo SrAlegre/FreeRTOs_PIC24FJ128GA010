@@ -2,8 +2,8 @@
 
 manifest_file_version: 1.0.0
 project: FreeRTOS
-creation_date: 2026-05-19T14:43:53.898-03:00[America/Sao_Paulo]
-operating_system: Windows 10
+creation_date: 2026-05-24T22:50:22.143-03:00[America/Sao_Paulo]
+operating_system: Windows 11
 mcc_mode: IDE
 mcc_mode_version: v6.30
 device_name: PIC24FJ128GA010
