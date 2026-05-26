@@ -11,4 +11,7 @@ void UART_Init(void);
 void UART_WriteChar(char c);
 void UART_WriteString(const char *str);
 
+void Atuador_Init(void);
+void GPIO_WriteAtuador(int estado);
+
 #endif
